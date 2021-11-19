@@ -17,7 +17,8 @@ namespace VRCFaceTracking
             "SRanipal.SRWorks_Log.dll",
             "SRanipal.ViveSR_Client.dll",
             "SRanipal.SRanipal.dll",
-            "Pimax.PimaxEyeTracker.dll"
+            "Pimax.PimaxEyeTracker.dll",
+            "Varjo.VarjoLib.dll"
         };
 
         public static void Init()

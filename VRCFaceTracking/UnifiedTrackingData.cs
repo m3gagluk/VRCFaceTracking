@@ -7,6 +7,7 @@ using ViveSR.anipal.Lip;
 using VRCFaceTracking.Params;
 using VRCFaceTracking.Params.LipMerging;
 using VRCFaceTracking.Pimax;
+using VRCFaceTracking.Varjo;
 
 namespace VRCFaceTracking
 {
@@ -42,6 +43,14 @@ namespace VRCFaceTracking
         {
             Look = new Vector2(eyeState.PupilCenterX, eyeState.PupilCenterY);
             Openness = eyeState.Openness;
+            Widen = 0;
+            Squeeze = 0;
+        }
+
+        public void Update(VarjoTracker.GazeRay eyeState, bool opened)
+        {
+            Look = new Vector2((float) eyeState.forward.x, (float)eyeState.forward.y);
+            Openness = opened ? 1 : 0;
             Widen = 0;
             Squeeze = 0;
         }
@@ -86,6 +95,31 @@ namespace VRCFaceTracking
             Left.Update(eyeData.Left);
             Right.Update(eyeData.Right);
             Combined.Update(eyeData.Recommended);
+        }
+
+        public void UpdateData(VarjoTracker.GazeData eyeData)
+        {
+            float dilation = 0;
+
+            if (eyeData.rightStatus != VarjoTracker.GazeEyeStatus.Invalid)
+            {
+                dilation = (float)eyeData.rightPupilSize;
+                UpdateMinMaxDilation((float)eyeData.rightPupilSize);
+            }
+            else if (eyeData.leftStatus != VarjoTracker.GazeEyeStatus.Invalid)
+            {
+                dilation = (float)eyeData.leftPupilSize;
+                UpdateMinMaxDilation((float)eyeData.leftPupilSize);
+            }
+            // a simple yet sort of effective heuristic to detetmine eye openness
+            bool leftOpened = eyeData.leftStatus != VarjoTracker.GazeEyeStatus.Invalid && eyeData.leftStatus != VarjoTracker.GazeEyeStatus.Visible;
+            bool rightOpened = eyeData.rightStatus != VarjoTracker.GazeEyeStatus.Invalid && eyeData.rightStatus != VarjoTracker.GazeEyeStatus.Visible;
+            Left.Update(eyeData.leftEye, leftOpened);
+            Right.Update(eyeData.rightEye, rightOpened);
+            Combined.Update(eyeData.gaze, leftOpened && rightOpened);
+
+            if (dilation != 0)
+                EyesDilation = dilation / _minDilation / (_maxDilation - _minDilation);
         }
 
         private void UpdateMinMaxDilation(float readDilation)

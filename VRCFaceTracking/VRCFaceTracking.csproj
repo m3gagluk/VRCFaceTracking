@@ -62,6 +62,8 @@
     <Compile Include="TrackingLibs\SRanipal\SRanipal_API.cs" />
     <Compile Include="TrackingLibs\SRanipal\SRanipal_Enums.cs" />
     <Compile Include="TrackingLibs\SRanipal\SRWorks_Enums.cs" />
+    <Compile Include="TrackingLibs\Varjo\VarjoTracker.cs" />
+    <Compile Include="TrackingLibs\Varjo\VarjoTrackingInterface.cs" />
     <Compile Include="UnifiedLibManager.cs" />
     <Compile Include="UnifiedTrackingData.cs" />
     <Compile Include="Hooking.cs" />
@@ -84,6 +86,7 @@
     <EmbeddedResource Include="TrackingLibs\SRanipal\SRanipal.dll" />
     <EmbeddedResource Include="TrackingLibs\SRanipal\SRWorks_Log.dll" />
     <EmbeddedResource Include="TrackingLibs\SRanipal\ViveSR_Client.dll" />
+    <EmbeddedResource Include="TrackingLibs\Varjo\VarjoLib.dll" />
     <EmbeddedResource Include="VRCFaceTracking" />
   </ItemGroup>
   <ItemGroup>
