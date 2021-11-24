@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -7,6 +7,7 @@ using ViveSR.anipal.Lip;
 using VRCFaceTracking.Params;
 using VRCFaceTracking.Params.LipMerging;
 using VRCFaceTracking.Pimax;
+using VRCFaceTracking.Varjo;
 
 namespace VRCFaceTracking
 {
@@ -42,6 +43,14 @@ namespace VRCFaceTracking
         {
             Look = new Vector2(eyeState.PupilCenterX, eyeState.PupilCenterY);
             Openness = eyeState.Openness;
+            Widen = 0;
+            Squeeze = 0;
+        }
+
+        public void Update(MemoryEye eyeState)
+        {
+            Look = new Vector2((float)eyeState.x, (float)eyeState.y);
+            Openness = eyeState.opened ? 1 : 0; // haha heuristics go brr
             Widen = 0;
             Squeeze = 0;
         }
@@ -86,6 +95,13 @@ namespace VRCFaceTracking
             Left.Update(eyeData.Left);
             Right.Update(eyeData.Right);
             Combined.Update(eyeData.Recommended);
+        }
+
+        public void UpdateData(MemoryData eyeData)
+        {
+            Left.Update(eyeData.leftEye);
+            Right.Update(eyeData.rightEye);
+            Combined.Update(eyeData.combined);
         }
 
         private void UpdateMinMaxDilation(float readDilation)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -17,7 +17,13 @@ namespace VRCFaceTracking
             "SRanipal.SRWorks_Log.dll",
             "SRanipal.ViveSR_Client.dll",
             "SRanipal.SRanipal.dll",
-            "Pimax.PimaxEyeTracker.dll"
+            "Pimax.PimaxEyeTracker.dll",
+            "Varjo.VarjoLib.dll"
+        };
+
+        // Hopefully Varjo will fix that issue someday
+        private static readonly string[] BinariesToExtract = {
+            "Varjo.VarjoCompanion.exe"
         };
 
         public static void Init()
@@ -25,9 +31,10 @@ namespace VRCFaceTracking
             var dllPaths = ExtractAssemblies(AssembliesToLoad);
             foreach (var path in dllPaths)
                 LoadAssembly(path);
+            ExtractAssemblies(BinariesToExtract, true);
         }
 
-        private static IEnumerable<string> ExtractAssemblies(IEnumerable<string> resourceNames)
+        private static IEnumerable<string> ExtractAssemblies(IEnumerable<string> resourceNames, bool exe = false)
         {
             var extractedPaths = new List<string>();
 
@@ -40,7 +47,7 @@ namespace VRCFaceTracking
 
             foreach (var dll in resourceNames)
             {
-                var dllPath = Path.Combine(dirName, GetAssemblyNameFromPath(dll));
+                var dllPath = Path.Combine(dirName, GetAssemblyNameFromPath(dll, exe));
 
                 using (var stm = Assembly.GetExecutingAssembly().GetManifestResourceStream("VRCFaceTracking.TrackingLibs."+dll))
                 {
@@ -71,11 +78,11 @@ namespace VRCFaceTracking
             return extractedPaths; 
         }
 
-        private static string GetAssemblyNameFromPath(string path)
+        private static string GetAssemblyNameFromPath(string path, bool exe = false)
         {
             var splitPath = path.Split('.').ToList();
             splitPath.Reverse();
-            return splitPath[1]+".dll";
+            return splitPath[1] + (exe ? ".exe" : ".dll");
         }
         
         [DllImport("kernel32", SetLastError = true, CharSet = CharSet.Unicode)]
